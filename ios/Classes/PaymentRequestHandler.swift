@@ -34,6 +34,9 @@ class PaymentRequestHandler: NSObject {
         request.supportedNetworks = supportedNetworks
         request.paymentSummaryItems = value.paymentSummaryItems.map({ $0.toPK() }).onlyType()
         request.applicationData = value.applicationData?.data(using: .utf8)
+        if #available(iOS 15.0, *) {
+            request.supportsCouponCode = value.supportsCouponCode
+        }
 
         if value.requiredBillingContactFields != nil {
             let list: [PKContactField] =
@@ -148,6 +151,33 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
 
             completion(result.toPK())
         }
+    }
+    
+    @available(iOS 15.0, *)
+    public func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didChangeCouponCode couponCode: String, handler completion: @escaping (PKPaymentRequestCouponCodeUpdate) -> Void){
+             let request = ChangeCouponCodeRequest(
+                id: paymentId,
+                couponCode: couponCode
+        )
+
+        channel.invokeMethod("didChangeCouponCode", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestCouponCodeUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didChangeCouponCode",
+                    "arguments": "\(any)",
+                ])
+                let result = PKPaymentRequestCouponCodeUpdate()
+                result.status = PKPaymentAuthorizationStatus.failure
+                return completion(result)
+            }
+
+            print(result.toPK().paymentSummaryItems)
+
+            completion(result.toPK())
+        }
+
     }
 
     public func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didSelectShippingContact contact: PKContact, handler completion: @escaping (PKPaymentRequestShippingContactUpdate) -> Void) {

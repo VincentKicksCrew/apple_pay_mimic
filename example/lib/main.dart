@@ -83,11 +83,13 @@ class _MyAppState extends State<MyApp> {
     }
 
     final delegate = PaymentDelegate(
-      items: items,
-      shippingMethods: shippingMethods,
-      allowedShippingCountries: allowedShippingCountries,
-      bonusItemsInGermany: bonusItemsInGermany,
-    );
+        items: items,
+        shippingMethods: shippingMethods,
+        allowedShippingCountries: allowedShippingCountries,
+        bonusItemsInGermany: bonusItemsInGermany,
+        onChangeCouponCode: (couponCode) async {
+          return true;
+        });
     final request = ProcessPaymentRequest(
       merchantIdentifier: 'MERCHANT ID',
       countryCode: 'US',
@@ -98,6 +100,7 @@ class _MyAppState extends State<MyApp> {
       paymentSummaryItems: PaymentDelegate.withTotal(items),
       supportedNetworks: availableNetworks,
       shippingMethods: shippingMethods,
+      supportsCouponCode: true,
     );
 
     ApplePayMimic.processPayment(
@@ -131,6 +134,7 @@ class PaymentDelegate extends PKPaymentAuthorizationControllerDelegate {
   final List<PKPaymentSummaryItem> bonusItemsInGermany;
   final List<PKShippingMethod> shippingMethods;
   final List<String> allowedShippingCountries;
+  final Future<bool> Function(String) onChangeCouponCode;
 
   String country = '';
 
@@ -139,6 +143,7 @@ class PaymentDelegate extends PKPaymentAuthorizationControllerDelegate {
     required this.shippingMethods,
     required this.bonusItemsInGermany,
     required this.allowedShippingCountries,
+    required this.onChangeCouponCode,
   });
 
   static List<PKPaymentSummaryItem> withTotal(List<PKPaymentSummaryItem> items) {
@@ -159,6 +164,30 @@ class PaymentDelegate extends PKPaymentAuthorizationControllerDelegate {
       status: PKPaymentAuthStatus.success,
       paymentSummaryItems: withTotal(items),
     );
+  }
+
+  @override
+  FutureOr<PKPaymentRequestCouponCodeUpdate> didChangeCouponCode(String couponCode) async {
+    final items = List.of(this.items);
+
+    print('coupon code: $couponCode');
+
+    bool isValid = await onChangeCouponCode(couponCode.trim());
+
+    if (isValid) {
+      items.add(PKPaymentSummaryItem(label: couponCode, amount: 10));
+      return PKPaymentRequestCouponCodeUpdate(
+        status: PKPaymentAuthStatus.success,
+        paymentSummaryItems: withTotal(items),
+        shippingMethods: [],
+      );
+    } else {
+      return PKPaymentRequestCouponCodeUpdate(
+        status: PKPaymentAuthStatus.failure,
+        paymentSummaryItems: withTotal(items),
+        shippingMethods: [],
+      );
+    }
   }
 
   @override

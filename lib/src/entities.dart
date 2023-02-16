@@ -424,6 +424,30 @@ class PKPaymentRequestMerchantSessionUpdate {
   const PKPaymentRequestMerchantSessionUpdate({required this.status, this.dictionary = const {}});
 }
 
+
+class PKPaymentRequestCouponCodeUpdate {
+  final PKPaymentAuthStatus status;
+  final List<PKPaymentSummaryItem> paymentSummaryItems;
+  final List<PKShippingMethod> shippingMethods;
+  final List<PKPaymentError>? errors;
+
+  const PKPaymentRequestCouponCodeUpdate({
+    required this.status,
+    required this.paymentSummaryItems,
+    required this.shippingMethods,
+    this.errors,
+  });
+
+  Map toJson() {
+    return {
+      'status': status.toJson(),
+      'paymentSummaryItems': paymentSummaryItems.map((e) => e.toJson()).toList(),
+      'shippingMethods': shippingMethods.map((e) => e.toJson()).toList(),
+      'errors': errors?.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
 class PKPaymentRequestShippingContactUpdate {
   final PKPaymentAuthStatus status;
   final List<PKPaymentSummaryItem> paymentSummaryItems;

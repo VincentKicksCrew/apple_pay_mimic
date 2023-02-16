@@ -27,6 +27,7 @@ class ProcessPaymentRequest {
   final PKShippingType shippingType;
   final String? applicationData;
   final List<String>? supportedCountries;
+  final bool? supportsCouponCode;
 
   const ProcessPaymentRequest({
     required this.merchantIdentifier,
@@ -43,6 +44,7 @@ class ProcessPaymentRequest {
     required this.shippingType,
     this.applicationData,
     this.supportedCountries,
+    this.supportsCouponCode,
   });
 
   Map toJson() => {
@@ -60,7 +62,22 @@ class ProcessPaymentRequest {
         'shippingType': shippingType.toJson(),
         'applicationData': applicationData,
         'supportedCountries': supportedCountries,
+        'supportsCouponCode': supportsCouponCode,
       };
+}
+
+class ChangeCouponCodeRequest {
+  final int id;
+  final String couponCode;
+
+  const ChangeCouponCodeRequest({required this.id, required this.couponCode});
+
+  static ChangeCouponCodeRequest fromJson(Map map) {
+    return ChangeCouponCodeRequest(
+      id: map['id'] as int,
+      couponCode: map['couponCode'] as String,
+    );
+  }
 }
 
 class SelectPaymentMethodRequest {

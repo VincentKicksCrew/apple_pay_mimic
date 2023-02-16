@@ -78,6 +78,8 @@ class ApplePayMimic {
       return await _didSelectShippingContact(call.arguments);
     } else if (call.method == 'didSelectPaymentMethod') {
       return await _didSelectPaymentMethod(call.arguments);
+    } else if (call.method == 'didChangeCouponCode') {
+      return await _didChangeCouponCode(call.arguments);
     } else if (call.method == 'error') {
       return await _handleError(call.arguments);
     } else if (call.method == 'dismissed') {
@@ -131,6 +133,18 @@ class ApplePayMimic {
     try {
       final request = SelectPaymentMethodRequest.fromJson(jsonDecode(arguments as String) as Map);
       final result = await _handler(request.id).delegate.didSelectPaymentMethod(request.paymentMethod);
+      final json = result.toJson();
+
+      return jsonEncode(json);
+    } catch (e, s) {
+      print('[Apple Pay] internal error $e\n$s');
+    }
+  }
+
+  static Future<dynamic> _didChangeCouponCode(dynamic arguments) async {
+    try {
+      final request = ChangeCouponCodeRequest.fromJson(jsonDecode(arguments as String) as Map);
+      final result = await _handler(request.id).delegate.didChangeCouponCode(request.couponCode);
       final json = result.toJson();
 
       return jsonEncode(json);

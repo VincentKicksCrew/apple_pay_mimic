@@ -467,6 +467,7 @@ struct ProcessPaymentRequest: Codable {
     let shippingType: APayShippingType
     let applicationData: String?
     let supportedCountries: [String]?
+    let supportsCouponCode: Bool
 }
 
 /*
@@ -521,6 +522,36 @@ struct SelectShippingMethodResponse: Codable {
     let result: APayRequestShippingMethodUpdate
 }
 
+
+/// ChangeCouponCode
+struct APayRequestCouponCodeUpdate: Codable {
+    let status: APayPaymentAuthStatus
+    let paymentSummaryItems: [APayPaymentSummaryItem]
+    let shippingMethods: [APayShippingMethod]
+    let errors: [APayPaymentError]?
+
+    @available(iOS 15.0, *)
+    public func toPK() -> PKPaymentRequestCouponCodeUpdate {
+        let result = PKPaymentRequestCouponCodeUpdate(
+                errors: errors?.map({ $0.toPK() }).onlyType(),
+                paymentSummaryItems: paymentSummaryItems.map({ $0.toPK() }).onlyType(),
+                shippingMethods: shippingMethods.map({ $0.toPK() }).onlyType()
+        )
+        result.status = status.toPK()
+        return result
+    }
+}
+
+struct ChangeCouponCodeRequest: Codable {
+    let id: Int
+    let couponCode: String
+}
+
+struct ChangeCouponCodeResponse: Codable {
+    let result: APayRequestCouponCodeUpdate
+}
+
+
 /// SelectShippingContact
 struct APayRequestShippingContactUpdate: Codable {
     let status: APayPaymentAuthStatus
@@ -534,7 +565,6 @@ struct APayRequestShippingContactUpdate: Codable {
                 paymentSummaryItems: paymentSummaryItems.map({ $0.toPK() }).onlyType(),
                 shippingMethods: shippingMethods.map({ $0.toPK() }).onlyType()
         )
-        print(result.errors)
         result.status = status.toPK()
         return result
     }

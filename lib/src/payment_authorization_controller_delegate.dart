@@ -35,4 +35,8 @@ class PKPaymentAuthorizationControllerDelegate {
   FutureOr<PKPaymentRequestPaymentMethodUpdate> didSelectPaymentMethod(PKPaymentMethod paymentMethod) {
     throw UnimplementedError();
   }
+
+  FutureOr<PKPaymentRequestCouponCodeUpdate> didChangeCouponCode(String couponCode) {
+    throw UnimplementedError();
+  }
 }

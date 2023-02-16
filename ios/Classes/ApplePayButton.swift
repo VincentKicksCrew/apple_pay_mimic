@@ -129,7 +129,7 @@ class FLNativeView: NSObject, FlutterPlatformView {
         binaryMessenger messenger: FlutterBinaryMessenger?,
         channel: FlutterMethodChannel
     ) {
-        print("[Apple Pay] FLNativeView1", args)
+        print("[Apple Pay] FLNativeView1 \(args)")
         self.messenger = messenger
         self.channel = channel
         self.viewId = viewId
