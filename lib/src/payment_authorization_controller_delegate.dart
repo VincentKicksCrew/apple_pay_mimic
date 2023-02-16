@@ -35,7 +35,7 @@ class PKPaymentAuthorizationControllerDelegate {
   FutureOr<PKPaymentRequestPaymentMethodUpdate> didSelectPaymentMethod(PKPaymentMethod paymentMethod) {
     throw UnimplementedError();
   }
-
+  // iOS 15
   FutureOr<PKPaymentRequestCouponCodeUpdate> didChangeCouponCode(String couponCode) {
     throw UnimplementedError();
   }

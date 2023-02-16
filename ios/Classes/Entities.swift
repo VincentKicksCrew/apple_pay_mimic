@@ -5,6 +5,8 @@ struct Constants {
     static let paymentErrorShippingAddressInvalid = "paymentErrorShippingAddressInvalid"
     static let paymentErrorBillingAddressInvalid = "paymentErrorBillingAddressInvalid"
     static let paymentErrorShippingAddressUnserviceable = "paymentErrorShippingAddressUnserviceable"
+    static let paymentErrorCouponCodeInvalid = "paymentErrorCouponCodeInvalid"
+    static let paymentErrorCouponCodeExpired = "paymentErrorCouponCodeExpired"
 
     static let paymentResultShippingContactUpdate = "paymentResultShippingContactUpdate"
     static let paymentResultShippingMethodUpdate = "paymentResultShippingMethodUpdate"
@@ -447,6 +449,10 @@ struct APayPaymentError: Codable {
             return PKPaymentRequest.paymentBillingAddressInvalidError(withKey: postalAddressKey!, localizedDescription: localizedDescription)
         case Constants.paymentErrorShippingAddressUnserviceable:
             return PKPaymentRequest.paymentShippingAddressUnserviceableError(withLocalizedDescription: localizedDescription)
+        case Constants.paymentErrorCouponCodeInvalid:
+            return PKPaymentRequest.paymentCouponCodeInvalidError(localizedDescription: localizedDescription)
+        case Constants.paymentErrorCouponCodeExpired:
+            return PKPaymentRequest.paymentCouponCodeExpiredError(localizedDescription: localizedDescription)
         default: return nil
         }
     }
