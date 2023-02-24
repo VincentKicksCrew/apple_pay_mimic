@@ -450,9 +450,15 @@ struct APayPaymentError: Codable {
         case Constants.paymentErrorShippingAddressUnserviceable:
             return PKPaymentRequest.paymentShippingAddressUnserviceableError(withLocalizedDescription: localizedDescription)
         case Constants.paymentErrorCouponCodeInvalid:
-            return PKPaymentRequest.paymentCouponCodeInvalidError(localizedDescription: localizedDescription)
+           if #available(iOS 15.0, *) {
+                return PKPaymentRequest.paymentCouponCodeInvalidError(localizedDescription: localizedDescription)
+           }
+            return nil
         case Constants.paymentErrorCouponCodeExpired:
-            return PKPaymentRequest.paymentCouponCodeExpiredError(localizedDescription: localizedDescription)
+            if #available(iOS 15.0, *) {
+                return PKPaymentRequest.paymentCouponCodeExpiredError(localizedDescription: localizedDescription)
+            }
+             return nil
         default: return nil
         }
     }
