@@ -389,6 +389,20 @@ class PKPaymentError {
       localizedDescription: localizedDescription,
     );
   }
+
+  factory PKPaymentError.couponCodeInvalidError({String postalAddressKey = '', String? localizedDescription}) {
+    return PKPaymentError._(
+      errorType: 'paymentErrorCouponCodeInvalid',
+      localizedDescription: localizedDescription,
+    );
+  }
+
+  factory PKPaymentError.couponCodeExpiredError({String postalAddressKey = '', String? localizedDescription}) {
+    return PKPaymentError._(
+      errorType: 'paymentErrorCouponCodeExpired',
+      localizedDescription: localizedDescription,
+    );
+  }
 }
 
 class PKPaymentAuthorizationResult {
