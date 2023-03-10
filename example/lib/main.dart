@@ -201,7 +201,7 @@ class PaymentDelegate extends PKPaymentAuthorizationControllerDelegate {
         shippingMethods: shippingMethods,
         errors: [
           PKPaymentError.shippingAddressUnserviceable(
-              postalAddressKey: ApplePayConstants.postalAddressCountryKey, withLocalizedDescription: NSLocalizedString("shippingAddressUnserviceableError", comment: "")),
+              postalAddressKey: ApplePayConstants.postalAddressCountryKey, localizedDescription: NSLocalizedString("shippingAddressUnserviceableError", comment: "")),
         ],
       );
     }
