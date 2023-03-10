@@ -11,7 +11,6 @@ struct Constants {
     static let paymentResultShippingContactUpdate = "paymentResultShippingContactUpdate"
     static let paymentResultShippingMethodUpdate = "paymentResultShippingMethodUpdate"
     static let paymentResultPaymentMethodUpdate = "paymentResultPaymentMethodUpdate"
-    let test = NSLocalizedString("shippingAddressUnserviceableError", comment: "")
 }
 
 struct APayPaymentAuthStatus: Codable {
@@ -445,11 +444,11 @@ struct APayPaymentError: Codable {
 
             return PKPaymentRequest.paymentContactInvalidError(withContactField: contactField, localizedDescription: localizedDescription)
         case Constants.paymentErrorShippingAddressInvalid:
-            return PKPaymentRequest.paymentShippingAddressInvalidError(withKey: postalAddressKey!, localizedDescription: Constants.test)
+            return PKPaymentRequest.paymentShippingAddressInvalidError(withKey: postalAddressKey!, localizedDescription: NSLocalizedString("shippingAddressUnserviceableError", comment: ""))
         case Constants.paymentErrorBillingAddressInvalid:
             return PKPaymentRequest.paymentBillingAddressInvalidError(withKey: postalAddressKey!, localizedDescription: localizedDescription)
         case Constants.paymentErrorShippingAddressUnserviceable:
-            return PKPaymentRequest.paymentShippingAddressUnserviceableError(withLocalizedDescription: Constants.test)
+            return PKPaymentRequest.paymentShippingAddressUnserviceableError(withLocalizedDescription: NSLocalizedString("shippingAddressUnserviceableError", comment: ""))
         case Constants.paymentErrorCouponCodeInvalid:
            if #available(iOS 15.0, *) {
                 return PKPaymentRequest.paymentCouponCodeInvalidError(localizedDescription: localizedDescription)
