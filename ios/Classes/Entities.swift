@@ -448,7 +448,7 @@ struct APayPaymentError: Codable {
         case Constants.paymentErrorBillingAddressInvalid:
             return PKPaymentRequest.paymentBillingAddressInvalidError(withKey: postalAddressKey!, localizedDescription: localizedDescription)
         case Constants.paymentErrorShippingAddressUnserviceable:
-            return PKPaymentRequest.paymentShippingAddressUnserviceableError(withLocalizedDescription: NSLocalizedString("shippingAddressUnserviceableError", comment: ""))
+            return PKPaymentRequest.paymentShippingAddressUnserviceableError(localizedDescription: NSLocalizedString("shippingAddressUnserviceableError", comment: ""))
         case Constants.paymentErrorCouponCodeInvalid:
            if #available(iOS 15.0, *) {
                 return PKPaymentRequest.paymentCouponCodeInvalidError(localizedDescription: localizedDescription)
