@@ -41,6 +41,7 @@ class PKPaymentNetwork {
   static const vPay = PKPaymentNetwork("vPay");
   static const barcode = PKPaymentNetwork("barcode");
   static const girocard = PKPaymentNetwork("girocard");
+  static const amex = PKPaymentNetwork("amex");
 }
 
 class PKMerchantCapability {
@@ -217,9 +218,7 @@ class PersonNameComponents {
       familyName: map['familyName'] as String?,
       nameSuffix: map['nameSuffix'] as String?,
       nickname: map['nickname'] as String?,
-      phoneticRepresentation: map['phoneticRepresentation'] != null
-          ? PersonNameComponents.fromJson(map['phoneticRepresentation'] as Map)
-          : null,
+      phoneticRepresentation: map['phoneticRepresentation'] != null ? PersonNameComponents.fromJson(map['phoneticRepresentation'] as Map) : null,
     );
   }
 
@@ -437,7 +436,6 @@ class PKPaymentRequestMerchantSessionUpdate {
 
   const PKPaymentRequestMerchantSessionUpdate({required this.status, this.dictionary = const {}});
 }
-
 
 class PKPaymentRequestCouponCodeUpdate {
   final PKPaymentAuthStatus status;
