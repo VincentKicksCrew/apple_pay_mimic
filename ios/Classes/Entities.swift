@@ -115,6 +115,7 @@ struct APayPaymentNetwork: Codable {
     static let vPay = APayPaymentNetwork(value: "vPay")
     static let barcode = APayPaymentNetwork(value: "barcode")
     static let girocard = APayPaymentNetwork(value: "girocard")
+    static let amex = APayPaymentNetwork(value: "amex")
 
     public func toPK() -> PKPaymentNetwork? {
         switch value {
