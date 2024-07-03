@@ -156,6 +156,8 @@ class FLNativeView: NSObject, FlutterPlatformView {
     }
 
     @objc func tap() -> Void {
-        channel.invokeMethod("tap", arguments: viewId)
+        DispatchQueue.main.async {
+            channel.invokeMethod("tap", arguments: viewId)
+        }
     }
 }
