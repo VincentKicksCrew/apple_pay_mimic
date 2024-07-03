@@ -14,12 +14,10 @@ class PaymentRequestHandler: NSObject {
 
     public func process(_ value: ProcessPaymentRequest) {
         guard let shippingType = value.shippingType.toPK() else {
-            return DispatchQueue.main.async {
-                channel.invokeMethod("error", arguments: [
+            return channel.invokeMethod("error", arguments: [
                 "id": paymentId,
                 "error": "Некорректный shippingType " + value.shippingType.value
-                ])
-            }
+            ])
         }
 
         let supportedNetworks: [PKPaymentNetwork] =
@@ -75,9 +73,7 @@ class PaymentRequestHandler: NSObject {
         controller!.delegate = self
         controller!.present { result in
             if !result {
-                DispatchQueue.main.async {
-                    self.channel.invokeMethod("error", arguments: ["id": self.paymentId])
-                }
+                self.channel.invokeMethod("error", arguments: ["id": self.paymentId])
             }
         }
     }
@@ -86,9 +82,7 @@ class PaymentRequestHandler: NSObject {
 extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
     public func paymentAuthorizationControllerDidFinish(_ controller: PKPaymentAuthorizationController) {
         controller.dismiss {
-            DispatchQueue.main.async {
-                self.channel.invokeMethod("dismissed", arguments: ["id": self.paymentId])
-            }
+            self.channel.invokeMethod("dismissed", arguments: ["id": self.paymentId])
         }
     }
 
@@ -97,24 +91,19 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 payment: APayPayment.fromPK(payment)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayPaymentAuthorizationResult = decodeJson(string) else {
 
-                        DispatchQueue.main.async {
-                            self.channel.invokeMethod("error", arguments: [
-                                "id": self.paymentId,
-                                "step": "didAuthorizePayment",
-                                "arguments": "\(any)",
-                            ])
-                        }
-
-                        return completion(PKPaymentAuthorizationStatus.failure)
-                }
-
-                completion(result.status.toPK())
+        channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayPaymentAuthorizationResult = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didAuthorizePayment",
+                    "arguments": "\(any)",
+                ])
+                return completion(PKPaymentAuthorizationStatus.failure)
             }
+
+            completion(result.status.toPK())
         }
     }
 
@@ -123,24 +112,21 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 payment: APayPayment.fromPK(payment)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayPaymentAuthorizationResult = decodeJson(string) else {
-                        DispatchQueue.main.async {
-                            self.channel.invokeMethod("error", arguments: [
-                                "id": self.paymentId,
-                                "step": "didAuthorizePayment",
-                                "arguments": "\(any)",
-                            ])
-                        }
-                    let result = PKPaymentAuthorizationResult()
-                    result.status = PKPaymentAuthorizationStatus.failure
-                    return completion(result)
-                }
 
-                completion(result.toPK())
+        channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayPaymentAuthorizationResult = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didAuthorizePayment",
+                    "arguments": "\(any)",
+                ])
+                let result = PKPaymentAuthorizationResult()
+                result.status = PKPaymentAuthorizationStatus.failure
+                return completion(result)
             }
+
+            completion(result.toPK())
         }
     }
 
@@ -149,22 +135,21 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 shippingMethod: APayShippingMethod.fromPK(shippingMethod)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
-                    self.channel.invokeMethod("error", arguments: [
-                        "id": self.paymentId,
-                        "step": "didSelectShippingMethod",
-                        "arguments": "\(any)",
-                    ])
-                    let result = PKPaymentRequestShippingMethodUpdate()
-                    result.status = PKPaymentAuthorizationStatus.failure
-                    return completion(result)
-                }
 
-                completion(result.toPK())
+        channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didSelectShippingMethod",
+                    "arguments": "\(any)",
+                ])
+                let result = PKPaymentRequestShippingMethodUpdate()
+                result.status = PKPaymentAuthorizationStatus.failure
+                return completion(result)
             }
+
+            completion(result.toPK())
         }
     }
     
@@ -174,27 +159,23 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 couponCode: couponCode
         )
-        DispatchQueue.main.async {
-                channel.invokeMethod("didChangeCouponCode", arguments: encodeJson(request)) { any in
-                    guard let string = any as? String,
-                        let result: APayRequestCouponCodeUpdate = decodeJson(string) else {
 
-                        DispatchQueue.main.async {        
-                            self.channel.invokeMethod("error", arguments: [
-                                "id": self.paymentId,
-                                "step": "didChangeCouponCode",
-                                "arguments": "\(any)",
-                            ])
-                        }
-                        let result = PKPaymentRequestCouponCodeUpdate()
-                        result.status = PKPaymentAuthorizationStatus.failure
-                        return completion(result)
-                    }
+        channel.invokeMethod("didChangeCouponCode", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestCouponCodeUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didChangeCouponCode",
+                    "arguments": "\(any)",
+                ])
+                let result = PKPaymentRequestCouponCodeUpdate()
+                result.status = PKPaymentAuthorizationStatus.failure
+                return completion(result)
+            }
 
-                    print(result.toPK().paymentSummaryItems)
+            print(result.toPK().paymentSummaryItems)
 
-                    completion(result.toPK())
-                }
+            completion(result.toPK())
         }
 
     }
@@ -204,29 +185,24 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 shippingContact: APayContact.fromPK(contact)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayRequestShippingContactUpdate = decodeJson(string) else {
 
-                    DispatchQueue.main.async {
-                        self.channel.invokeMethod("error", arguments: [
-                            "id": self.paymentId,
-                            "step": "didSelectShippingContact",
-                            "arguments": "\(any)",
-                        ])
-                    }
+        channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestShippingContactUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didSelectShippingContact",
+                    "arguments": "\(any)",
+                ])
+                let result = PKPaymentRequestShippingContactUpdate()
+                result.status = PKPaymentAuthorizationStatus.failure
+                return completion(result)
+            }
 
-                    let result = PKPaymentRequestShippingContactUpdate()
-                    result.status = PKPaymentAuthorizationStatus.failure
-                    return completion(result)
-                }
+            print(result.toPK().paymentSummaryItems)
 
-                print(result.toPK().paymentSummaryItems)
-
-                completion(result.toPK())
+            completion(result.toPK())
         }
-    }
     }
 
     public func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didSelectPaymentMethod paymentMethod: PKPaymentMethod, handler completion: @escaping (PKPaymentRequestPaymentMethodUpdate) -> Void) {
@@ -234,26 +210,21 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 paymentMethod: APayPaymentMethod.fromPK(paymentMethod)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayRequestPaymentMethodUpdate = decodeJson(string) else {
 
-                    DispatchQueue.main.async {        
-                        self.channel.invokeMethod("error", arguments: [
-                            "id": self.paymentId,
-                            "step": "didSelectPaymentMethod",
-                            "arguments": "\(any)",
-                        ])
-                    }
-
-                    let result = PKPaymentRequestPaymentMethodUpdate()
-                    result.status = PKPaymentAuthorizationStatus.failure
-                    return completion(result)
-                }
-
-                completion(result.toPK())
+        channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestPaymentMethodUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didSelectPaymentMethod",
+                    "arguments": "\(any)",
+                ])
+                let result = PKPaymentRequestPaymentMethodUpdate()
+                result.status = PKPaymentAuthorizationStatus.failure
+                return completion(result)
             }
+
+            completion(result.toPK())
         }
     }
 
@@ -273,22 +244,19 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 shippingMethod: APayShippingMethod.fromPK(shippingMethod)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
-                    DispatchQueue.main.async {
-                        self.channel.invokeMethod("error", arguments: [
-                            "id": self.paymentId,
-                            "step": "didSelectShippingMethod",
-                            "arguments": "\(any)",
-                        ])
-                    }
-                    return completion(PKPaymentAuthorizationStatus.failure, [])
-                }
-                let pk = result.toPK()
-                completion(pk.status, pk.paymentSummaryItems)
+
+        channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didSelectShippingMethod",
+                    "arguments": "\(any)",
+                ])
+                return completion(PKPaymentAuthorizationStatus.failure, [])
             }
+            let pk = result.toPK()
+            completion(pk.status, pk.paymentSummaryItems)
         }
     }
 
@@ -297,22 +265,19 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 id: paymentId,
                 shippingContact: APayContact.fromPK(contact)
         )
-        DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayRequestShippingContactUpdate = decodeJson(string) else {
-                    DispatchQueue.main.async {
-                        self.channel.invokeMethod("error", arguments: [
-                            "id": self.paymentId,
-                            "step": "didSelectShippingContact",
-                            "arguments": "\(any)",
-                        ])
-                    }
-                    return completion(PKPaymentAuthorizationStatus.failure, [], [])
-                }
-                let pk = result.toPK()
-                completion(pk.status, pk.shippingMethods, pk.paymentSummaryItems)
+
+        channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestShippingContactUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didSelectShippingContact",
+                    "arguments": "\(any)",
+                ])
+                return completion(PKPaymentAuthorizationStatus.failure, [], [])
             }
+            let pk = result.toPK()
+            completion(pk.status, pk.shippingMethods, pk.paymentSummaryItems)
         }
     }
 
@@ -322,22 +287,18 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 paymentMethod: APayPaymentMethod.fromPK(paymentMethod)
         )
 
-        DispatchQueue.main.async {
-            channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
-                guard let string = any as? String,
-                    let result: APayRequestPaymentMethodUpdate = decodeJson(string) else {
-                    DispatchQueue.main.async {
-                        self.channel.invokeMethod("error", arguments: [
-                            "id": self.paymentId,
-                            "step": "didSelectPaymentMethod",
-                            "arguments": "\(any)",
-                        ])
-                    }
-                    return completion([])
-                }
-
-                completion(result.toPK().paymentSummaryItems)
+        channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
+            guard let string = any as? String,
+                  let result: APayRequestPaymentMethodUpdate = decodeJson(string) else {
+                self.channel.invokeMethod("error", arguments: [
+                    "id": self.paymentId,
+                    "step": "didSelectPaymentMethod",
+                    "arguments": "\(any)",
+                ])
+                return completion([])
             }
+
+            completion(result.toPK().paymentSummaryItems)
         }
     }
 
