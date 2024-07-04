@@ -16,7 +16,7 @@ class PaymentRequestHandler: NSObject {
         guard let shippingType = value.shippingType.toPK() else {
             return DispatchQueue.main.async {
                 self.channel.invokeMethod("error", arguments: [
-                "id": paymentId,
+                "id": self.paymentId,
                 "error": "Некорректный shippingType " + value.shippingType.value
                 ])
             }
