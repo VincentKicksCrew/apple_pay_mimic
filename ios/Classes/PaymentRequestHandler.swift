@@ -153,11 +153,13 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
             self.channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
-                    self.channel.invokeMethod("error", arguments: [
-                        "id": self.paymentId,
-                        "step": "didSelectShippingMethod",
-                        "arguments": "\(any)",
-                    ])
+                    DispatchQueue.main.async {        
+                        self.channel.invokeMethod("error", arguments: [
+                            "id": self.paymentId,
+                            "step": "didSelectShippingMethod",
+                            "arguments": "\(any)",
+                        ])
+                    }
                     let result = PKPaymentRequestShippingMethodUpdate()
                     result.status = PKPaymentAuthorizationStatus.failure
                     return completion(result)
