@@ -15,7 +15,7 @@ class PaymentRequestHandler: NSObject {
     public func process(_ value: ProcessPaymentRequest) {
         guard let shippingType = value.shippingType.toPK() else {
             return DispatchQueue.main.async {
-                channel.invokeMethod("error", arguments: [
+                self.channel.invokeMethod("error", arguments: [
                 "id": paymentId,
                 "error": "Некорректный shippingType " + value.shippingType.value
                 ])
@@ -98,7 +98,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 payment: APayPayment.fromPK(payment)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayPaymentAuthorizationResult = decodeJson(string) else {
 
@@ -124,7 +124,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 payment: APayPayment.fromPK(payment)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didAuthorizePayment", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayPaymentAuthorizationResult = decodeJson(string) else {
                         DispatchQueue.main.async {
@@ -150,7 +150,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 shippingMethod: APayShippingMethod.fromPK(shippingMethod)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
                     self.channel.invokeMethod("error", arguments: [
@@ -175,7 +175,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 couponCode: couponCode
         )
         DispatchQueue.main.async {
-                channel.invokeMethod("didChangeCouponCode", arguments: encodeJson(request)) { any in
+                self.channel.invokeMethod("didChangeCouponCode", arguments: encodeJson(request)) { any in
                     guard let string = any as? String,
                         let result: APayRequestCouponCodeUpdate = decodeJson(string) else {
 
@@ -205,7 +205,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 shippingContact: APayContact.fromPK(contact)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestShippingContactUpdate = decodeJson(string) else {
 
@@ -235,7 +235,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 paymentMethod: APayPaymentMethod.fromPK(paymentMethod)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestPaymentMethodUpdate = decodeJson(string) else {
 
@@ -274,7 +274,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 shippingMethod: APayShippingMethod.fromPK(shippingMethod)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didSelectShippingMethod", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestShippingMethodUpdate = decodeJson(string) else {
                     DispatchQueue.main.async {
@@ -298,7 +298,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
                 shippingContact: APayContact.fromPK(contact)
         )
         DispatchQueue.main.async {
-            channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didSelectShippingContact", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestShippingContactUpdate = decodeJson(string) else {
                     DispatchQueue.main.async {
@@ -323,7 +323,7 @@ extension PaymentRequestHandler: PKPaymentAuthorizationControllerDelegate {
         )
 
         DispatchQueue.main.async {
-            channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
+            self.channel.invokeMethod("didSelectPaymentMethod", arguments: encodeJson(request)) { any in
                 guard let string = any as? String,
                     let result: APayRequestPaymentMethodUpdate = decodeJson(string) else {
                     DispatchQueue.main.async {
